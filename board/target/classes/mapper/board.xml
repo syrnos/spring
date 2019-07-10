@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.board">
+
+
+	<insert id="INSERT_BOARD">
+		INSERT INTO `JSP_BOARD` SET
+		title = #{title},
+		content = #{content},
+		uid = #{uid},
+		regip = #{regip},
+		rdate = NOW()
+	</insert>
+	
+	<select id="SELECT_BOARD_LIST" resultType="kr.co.board.vo.BoardVO">
+		SELECT * FROM `JSP_BOARD` WHERE parent=0 AND cate='free' ORDER BY rdate DESC;
+	</select>
+	
+	<select id="SELECT_BOARD_VIEW" resultType="kr.co.board.vo.BoardVO">
+		SELECT * FROM `JSP_BOARD` WHERE seq=#{seq};
+	</select>
+	
+	
+	
+</mapper>
