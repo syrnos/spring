@@ -24,7 +24,7 @@
 				
 				<c:forEach var="vo" items="${boardList}">
 					<tr>
-						<td>${vo.seq}</td>
+						<td>${count=count-1}</td>
 						<td><a href="/board/view?seq=${vo.seq}">${vo.title}</a>&nbsp;[${vo.comment}]</td>
 						<td>${vo.uid}</td>
 						<td>${vo.rdate.substring(2,10)}</td>
@@ -36,9 +36,19 @@
 			<!-- 페이징 -->
 			<nav class="paging">
 				<span> 
-				<a href="#" class="prev">이전</a>
-				<a href="#" class="num">1</a>
-				<a href="#" class="next">다음</a>
+				
+				<c:if test="${groupStartEnd[0] > 1}">
+					<a href="/board/list?pg=${groupStartEnd[0] - 1}" class="prev">이전</a>
+				</c:if>
+				
+				
+				<c:forEach var="i" begin="${groupStartEnd[0]}" end="${groupStartEnd[1]}">
+				<a href="/board/list?pg=${i}" class="num">${i}</a>
+				</c:forEach>
+				
+				<c:if test="${groupStartEnd[1] < pageEnd}">
+					<a href="/board/list?pg=${groupStartEnd[1] + 1}" class="next">다음</a>
+				</c:if>
 				</span>
 			</nav>
 			<a href="/board/write" class="btnWrite">글쓰기</a>

@@ -36,9 +36,9 @@
 						</tr>
 					</table>
 					<div class="btns">
-						<a href="#" class="cancel del">삭제</a>
-						<a href="#" class="cancel mod">수정</a>
-						<a href="#" class="cancel">목록</a>
+						<a href="/board/delete" class="cancel del">삭제</a>
+						<a href="/board/modify?seq=${vo.seq}" class="cancel mod">수정</a>
+						<a href="/board/list" class="cancel">목록</a>
 					</div>
 				</form>
 			</div><!-- view 끝 -->

@@ -22,11 +22,30 @@ public class BoardController {
 	private BoardService service;
 	
 	@RequestMapping("/list")
-	public String list(Model model) {
+	public String list(Model model,String pg) {
 		
-		List<BoardVO> boardList = service.list();
+		//Limit start계산
+		int start = service.getLimitStart(pg);
+		
+		//전체 게시물 갯수
+		int total = service.getTotalCount();
+		
+		//페이지번호 계산
+		int pageEnd = service.getPageEnd(total);
+		
+		//글 카운터번호
+		int count = service.getPageCountStart(total, start);
+		
+		//페이지 그룹계산 
+		int[] groupStartEnd = service.getPageGroupStartEnd(pg, pageEnd);
+		
+		
+		
+		List<BoardVO> boardList = service.list(start);
 		model.addAttribute("boardList",boardList);
-		
+		model.addAttribute("count",count);
+		model.addAttribute("pageEnd",pageEnd);
+		model.addAttribute("groupStartEnd",groupStartEnd);
 		
 		return "/list";
 				
@@ -60,6 +79,24 @@ public class BoardController {
 		service.write(vo);
 		return "redirect:/list";
 				
+	}
+	
+	@RequestMapping(value="/modify", method = RequestMethod.GET)
+	public String modify(int seq, Model model) {
+		
+		BoardVO vo = service.view(seq);
+		model.addAttribute("vo",vo);
+		
+		return "/modify";
+	}
+	
+	@RequestMapping(value="/modify", method = RequestMethod.POST)
+	public String modify(BoardVO vo) {
+		
+		service.modify(vo);
+		
+		return "redirect:/view?seq="+vo.getSeq();
+		
 	}
 	
 	

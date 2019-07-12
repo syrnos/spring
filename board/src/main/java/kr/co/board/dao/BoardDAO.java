@@ -19,20 +19,26 @@ public class BoardDAO {
 		mybatis.insert("mapper.board.INSERT_BOARD",vo);
 	}
 
-	public List<BoardVO> list() {
-		return mybatis.selectList("mapper.board.SELECT_BOARD_LIST");
+	public List<BoardVO> list(int start) {
+		return mybatis.selectList("mapper.board.SELECT_BOARD_LIST", start);
 	}
 	
 	public BoardVO view(int seq) {
 		return mybatis.selectOne("mapper.board.SELECT_BOARD_VIEW", seq);
 	}
 
-	public void modify() {
+	public void modify(BoardVO vo) {
+		mybatis.update("mapper.board.UPDATE_BOARD",vo);
 		
 	}
 
 	public void delete() {
 		
+	}
+	
+	public int getTotalCount() {
+		
+		return 	mybatis.selectOne("mapper.board.SELECT_TOTAL_COUNT");
 	}
 	
 	
