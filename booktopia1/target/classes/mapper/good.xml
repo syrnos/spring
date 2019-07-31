@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.good">
+
+	<select id="SELECT_MAIN_GOOD_LIST" resultType="kr.co.booktopia.vo.ShopGoodsVO">
+		SELECT g.*, d.FILENAME FROM BT_SHOP_GOODS AS g, BT_SHOP_GOODS_IMAGE AS d
+ 		WHERE g.GOODS_ID=d.GOODS_ID AND d.FILETYPE='main_image' AND g.GOODS_STATUS=#{goodsStatus}
+ 		ORDER BY g.GOODS_CREDATE;
+	</select>
+	
+	<select id="SELECT_GOODS_LIST" resultType="kr.co.booktopia.vo.ShopGoodsVO">
+		SELECT g.*, d.FILENAME FROM BT_SHOP_GOODS AS g, BT_SHOP_GOODS_IMAGE AS d
+ 		WHERE g.GOODS_ID=d.GOODS_ID AND d.FILETYPE='main_image' AND g.GOODS_SORT=#{GOODS_SORT}
+		ORDER BY g.GOODS_CREDATE;
+	</select>
+
+	<select id="SELECT_GOODS_DETAIL" resultType="kr.co.booktopia.vo.ShopGoodsVO">
+	    SELECT g.*,d.fileName from BT_SHOP_GOODS g, BT_SHOP_GOODS_IMAGE d
+	       WHERE g.GOODS_ID=d.GOODS_ID
+	       AND d.FILETYPE='main_image'
+	       AND g.GOODS_ID=#{goods_id};	        
+	</select>
+	
+	<select id="SELECT_GOODS_IMAGE" resultType="kr.co.booktopia.vo.ShopGoodsImageVO">
+		<![CDATA[
+			SELECT * FROM BT_SHOP_GOODS_IMAGE
+			WHERE FILETYPE != 'main_image' AND GOODS_ID=#{goods_id};
+		]]>
+	</select>
+	
+	<select id="SELECT_CART_LIST" resultType="kr.co.booktopia.vo.ShopCartVO">
+	    <![CDATA[
+			SELECT * FROM `BT_SHOP_CART` WHERE MEMBER_ID=#{member_id};
+    	]]>
+	</select>
+	
+	<select id="SELECT_GOODS_LIST_FOR_CART" resultType="kr.co.booktopia.vo.ShopGoodsVO">
+		<![CDATA[
+			SELECT g.*, d.FILENAME FROM BT_SHOP_GOODS AS g, BT_SHOP_GOODS_IMAGE AS d
+	 		WHERE g.GOODS_ID=d.GOODS_ID 
+	 		AND d.FILETYPE='main_image' 
+	 		AND g.GOODS_ID IN
+		]]>
+		<foreach item="item"  collection="list" open="(" separator="," close=")" >
+        	#{item.GOODS_ID}
+      	</foreach>
+      	<![CDATA[
+	 		ORDER BY g.GOODS_CREDATE;
+		]]>
+		<!-- 
+			SELECT g.*, d.FILENAME FROM BT_SHOP_GOODS AS g, BT_SHOP_GOODS_IMAGE AS d
+	 		WHERE g.GOODS_ID=d.GOODS_ID 
+	 		AND d.FILETYPE='main_image' 
+	 		AND g.GOODS_ID IN (상품아이디1, 상품아이디2, 상품아이디3...) 
+	 		ORDER BY g.GOODS_CREDATE; 
+		 -->		
+	</select>
+	
+	<select id="SELECT_MAX_CART_ID" resultType="int">
+	    <![CDATA[
+			SELECT IF(ISNULL(MAX(CART_ID)), 1, MAX(CART_ID)+1) FROM BT_SHOP_CART;
+    	]]>
+	</select>
+	
+	<select id="SELECT_COUNT_IN_CART" resultType="String">
+		<![CDATA[
+			SELECT IF(COUNT(*) = 0, 'false', 'true') FROM `BT_SHOP_CART`
+			WHERE GOODS_ID=#{GOODS_ID} AND MEMBER_ID=#{MEMBER_ID};		
+		]]>
+	</select>
+	
+	
+	<insert id="INSERT_GOODS_IN_CART">
+		<![CDATA[
+			INSERT INTO `BT_SHOP_CART` (CART_ID, GOODS_ID, MEMBER_ID, CREDATE)
+			VALUES (#{CART_ID}, #{GOODS_ID}, #{MEMBER_ID}, NOW());
+		]]>	
+	</insert>
+	
+	
+	<select id="SELECT_MAX_ORDER_SEQ" resultType="int">
+	    <![CDATA[
+			SELECT IF(ISNULL(MAX(ORDER_SEQ_NUM)), 1, MAX(ORDER_SEQ_NUM)+1) FROM `BT_SHOP_ORDER`;
+    	]]>
+	</select>
+	
+	<insert id="INSERT_GOODS_IN_ORDER">
+		<![CDATA[
+			insert into `BT_SHOP_ORDER` (ORDER_ID,
+										 MEMBER_ID,
+									    GOODS_ID,
+									    GOODS_TITLE,
+									    GOODS_FILENAME,
+									    ORDER_GOODS_QTY,
+									    GOODS_SALES_PRICE,
+									    ORDERER_NAME,
+									    RECEIVER_NAME,
+									    RECEIVER_HP1,
+					                    RECEIVER_HP2,
+					                    RECEIVER_HP3,
+					                    RECEIVER_TEL1,
+					                    RECEIVER_TEL2,
+					                    RECEIVER_TEL3,
+					                    DELIVERY_ADDRESS,
+					                    DELIVERY_MESSAGE,
+						                DELIVERY_METHOD,
+						                GIFT_WRAPPING,
+						                PAY_METHOD,
+						                CARD_COM_NAME,
+						                CARD_PAY_MONTH,
+						                ORDERER_HP,
+						                PAY_ORDERER_HP_NUM)
+							     values(#{ORDER_ID},
+										#{MEMBER_ID},
+									    #{GOODS_ID},
+									    #{GOODS_TITLE},
+									    #{GOODS_FILENAME},
+									    #{ORDER_GOODS_QTY},
+									    #{GOODS_SALES_PRICE},
+									    #{ORDERER_NAME},
+									    #{RECEIVER_NAME},
+									    #{RECEIVER_HP1},
+					                    #{RECEIVER_HP2},
+					                    #{RECEIVER_HP3},
+					                    #{RECEIVER_TEL1},
+					                    #{RECEIVER_TEL2},
+					                    #{RECEIVER_TEL3},
+					                    #{DELIVERY_ADDRESS},
+					                    #{DELIVERY_MESSAGE},
+						                #{DELIVERY_METHOD},
+						                #{GIFT_WRAPPING},
+						                #{PAY_METHOD},
+						                #{CARD_COM_NAME},
+						                #{CARD_PAY_MONTH},
+						                #{ORDERER_HP},
+						                #{PAY_ORDERER_HP_NUM});
+    	]]>
+	</insert>
+	
+	
+	<select id="SELECT_GOODS_BY_SEARCH" resultType="kr.co.booktopia.vo.ShopGoodsVO">
+		<![CDATA[
+			SELECT g.*, d.fileName from BT_SHOP_GOODS g, BT_SHOP_GOODS_IMAGE d
+	        WHERE g.GOODS_ID=d.GOODS_ID
+	        AND d.FILETYPE='main_image'
+	        AND g.GOODS_TITLE LIKE CONCAT('%', #{searchWord}, '%')
+	        ORDER BY g.GOODS_CREDATE DESC;
+		]]>
+	</select>
+	
+	<select id="SELECT_SEARCH_AUTO_COMPLETE" resultType="String">
+		<![CDATA[
+			SELECT GOODS_TITLE FROM BT_SHOP_GOODS WHERE GOODS_TITLE LIKE CONCAT('%', #{keyword}, '%') ORDER BY GOODS_CREDATE DESC;
+		]]>
+	</select>
+		
+		
+
+</mapper>
